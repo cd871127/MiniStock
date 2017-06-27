@@ -1,0 +1,31 @@
+group 'com.anthony'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':BrowserMocker')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+setMainClassName('com.anthony.Main')
+
+jar {
+    manifest {
+        attributes 'Main-Class': getMainClassName()
+    }
+    from {
+        configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+    }
+}
