@@ -7,8 +7,10 @@ import com.anthony.processor.StockProcessor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -66,22 +68,31 @@ public class StockManager {
         String splitFormatStr = "|%98s|";
         String splitStr = String.format(splitFormatStr, "").replace(" ", "-");
 
-        do {
-            clearConsole();
-            System.out.println(splitStr);
-            System.out.println(titleStr);
-            System.out.println(splitStr);
-            List<StockInfo> stockInfos = mocker.get(url);
-            stockInfos.forEach((v) -> {
-                System.out.println(format(v));
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            do {
+                List<StockInfo> stockInfos = mocker.get(url);
+                long currentTimeMillis = System.currentTimeMillis();
+                Date date = new Date(currentTimeMillis);
+                Thread.sleep(1000);
+                clearConsole();
                 System.out.println(splitStr);
-            });
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } while (true);
+                System.out.println(titleStr);
+                System.out.println(splitStr);
+                if (stockInfos == null) {
+                    System.out.println("网络连接异常");
+                    continue;
+                }
+                stockInfos.forEach((v) -> {
+                    System.out.println(format(v));
+                    System.out.println(splitStr);
+                });
+                System.out.println(df.format(date));
+                Thread.sleep(4000);
+            } while (true);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private String format(StockInfo stockInfo) {
